@@ -28,7 +28,7 @@ enum class POSITION
 
 
 
-
+//1213123
 //предварительное объ€вление всех функций
 void greeting();
 void initialize_ships();
