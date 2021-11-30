@@ -12,7 +12,7 @@ const char HIT = 'X';
 const char MISS = '0';
 const char SPACER = ' ';
 
-//все структуры, списки, которые позже нужно вынести в заголовочный файл
+//ГўГ±ГҐ Г±ГІГ°ГіГЄГІГіГ°Г», Г±ГЇГЁГ±ГЄГЁ, ГЄГ®ГІГ®Г°Г»ГҐ ГЇГ®Г§Г¦ГҐ Г­ГіГ¦Г­Г® ГўГ»Г­ГҐГ±ГІГЁ Гў Г§Г ГЈГ®Г«Г®ГўГ®Г·Г­Г»Г© ГґГ Г©Г«
 struct ship
 {
 	string name;
@@ -28,8 +28,8 @@ enum class POSITION
 
 
 
-//1213123
-//предварительное объявление всех функций
+//4444
+//ГЇГ°ГҐГ¤ГўГ Г°ГЁГІГҐГ«ГјГ­Г®ГҐ Г®ГЎГєГїГўГ«ГҐГ­ГЁГҐ ГўГ±ГҐГµ ГґГіГ­ГЄГ¶ГЁГ©
 void greeting();
 void initialize_ships();
 void create_board(char**& board, char BOARD_HEIGHT, char BOARD_WIDTH);
@@ -53,11 +53,11 @@ int main()
 	bool game_over = false;
 	while (!game_over)
 	{
-		//основной игровой цикл
-		//1. Приветствие. 
-		//2. Размещение кораблей
-		//3. Кто первый ходит?
-		//4. Ход игрока
+		//Г®Г±Г­Г®ГўГ­Г®Г© ГЁГЈГ°Г®ГўГ®Г© Г¶ГЁГЄГ«
+		//1. ГЏГ°ГЁГўГҐГІГ±ГІГўГЁГҐ. 
+		//2. ГђГ Г§Г¬ГҐГ№ГҐГ­ГЁГҐ ГЄГ®Г°Г ГЎГ«ГҐГ©
+		//3. ГЉГІГ® ГЇГҐГ°ГўГ»Г© ГµГ®Г¤ГЁГІ?
+		//4. Г•Г®Г¤ ГЁГЈГ°Г®ГЄГ 
 		//4.1 ....
 	}
 	dispose(boardA, BOARD_HEIGHT, BOARD_WIDTH);
@@ -69,16 +69,16 @@ int main()
 
 
 
-//ФУНКЦИИ
+//Г”Г“ГЌГЉГ–Г€Г€
 
-//функции касающиеся доски
+//ГґГіГ­ГЄГ¶ГЁГЁ ГЄГ Г±Г ГѕГ№ГЁГҐГ±Гї Г¤Г®Г±ГЄГЁ
 void greeting()
 {
 	cout << "        INSTRUCTION        \n";
 	//some instruction
 }
 
-// выделяем память - вызови dispose
+// ГўГ»Г¤ГҐГ«ГїГҐГ¬ ГЇГ Г¬ГїГІГј - ГўГ»Г§Г®ГўГЁ dispose
 void create_board(char**& board, char BOARD_HEIGHT, char BOARD_WIDTH)
 {
 	board = new char* [BOARD_HEIGHT];
@@ -123,7 +123,7 @@ void print_board(char** board, char BOARD_HEIGHT, char BOARD_WIDTH)
 
 void dispose(char**& board, char BOARD_HEIGHT, char BOARD_WIDTH)
 {
-	//освобождение ресурсов
+	//Г®Г±ГўГ®ГЎГ®Г¦Г¤ГҐГ­ГЁГҐ Г°ГҐГ±ГіГ°Г±Г®Гў
 	for (int i = 0; i < (BOARD_HEIGHT); i++)
 	{
 		if (board[i] != nullptr)
@@ -140,7 +140,7 @@ void dispose(char**& board, char BOARD_HEIGHT, char BOARD_WIDTH)
 }
 
 
-//функции касающиеся кораблей
+//ГґГіГ­ГЄГ¶ГЁГЁ ГЄГ Г±Г ГѕГ№ГЁГҐГ±Гї ГЄГ®Г°Г ГЎГ«ГҐГ©
 void initialize_ships()
 {
 	ship[0].name = "CARRIER"; ship[0].length = 2; ship[0].count = 4;
@@ -151,8 +151,8 @@ void initialize_ships()
 
 void place_ship_on_board(char** board, char BOARD_HEIGHT, char BOARD_BOARDWIDTH, struct ship, int h, int w, POSITION position, int shipType, char SHIP_TYPES)
 {
-	//выбираем корабль, который хотим установить
-	//как сделать два связанных свитча, чтоб сначала выбрать корабль, а потом направление (как сократить код?)
+	//ГўГ»ГЎГЁГ°Г ГҐГ¬ ГЄГ®Г°Г ГЎГ«Гј, ГЄГ®ГІГ®Г°Г»Г© ГµГ®ГІГЁГ¬ ГіГ±ГІГ Г­Г®ГўГЁГІГј
+	//ГЄГ ГЄ Г±Г¤ГҐГ«Г ГІГј Г¤ГўГ  Г±ГўГїГ§Г Г­Г­Г»Гµ Г±ГўГЁГІГ·Г , Г·ГІГ®ГЎ Г±Г­Г Г·Г Г«Г  ГўГ»ГЎГ°Г ГІГј ГЄГ®Г°Г ГЎГ«Гј, Г  ГЇГ®ГІГ®Г¬ Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГҐ (ГЄГ ГЄ Г±Г®ГЄГ°Г ГІГЁГІГј ГЄГ®Г¤?)
 	while (SHIP_TYPES > 0)
 	{
 		cout << "Enter the number of ship: 0 \n  0 for CARRIER \n 1 for CRUISER \n 2 for BATTLESHIP \n 3 for DESTROYER \n" << endl;
