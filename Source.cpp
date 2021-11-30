@@ -4,7 +4,7 @@ using namespace std;
 
 const int BOARD_HEIGHT = 21; //rows
 const int BOARD_WIDTH = 10; //columns
-const int SHIP_TYPES = 4;
+const int COUNT_SHIP_TYPES = 2;//показывает сколько всего различных типов кораблей есть
 
 const char WATER = '.';
 const char SHIP = ' +';
@@ -12,74 +12,68 @@ const char HIT = 'X';
 const char MISS = '0';
 const char SPACER = ' ';
 
-//âñå ñòðóêòóðû, ñïèñêè, êîòîðûå ïîçæå íóæíî âûíåñòè â çàãîëîâî÷íûé ôàéë
-struct ship
+//все структуры, списки, которые позже нужно вынести в заголовочный файл
+struct ShipOptions
 {
 	string name;
 	int length;
 	int count;
-}ship[SHIP_TYPES];
+} shipOptions[COUNT_SHIP_TYPES];
 
-enum class POSITION
-{
-	horizontal = 0,
-	vertical = 1
-};
-
-
-
-//4444
-//ïðåäâàðèòåëüíîå îáúÿâëåíèå âñåõ ôóíêöèé
 void greeting();
 void initialize_ships();
-void create_board(char**& board, char BOARD_HEIGHT, char BOARD_WIDTH);
-void print_board(char** board, char BOARD_HEIGHT, char BOARD_WIDTH);
-void dispose(char**& board, char BOARD_HEIGHT, char BOARD_WIDTH);
-void place_ship_on_board(char** board, char BOARD_HEIGHT, char BOARD_BOARDWIDTH, struct ship, int h, int w, POSITION position, int shipType, char SHIP_TYPES);
+void create_board(char**& board);
+void print_board(char** board);
+void dispose(char**& board);
 
-
-
-
-
+void place_all_ships(char**& board);
 
 int main()
 {
+	initialize_ships();
+
 	char** boardA = nullptr;
-	greeting();
-	create_board(boardA, BOARD_HEIGHT, BOARD_WIDTH);
-	void place_ship_on_board(char** board, char BOARD_HEIGHT, char BOARD_BOARDWIDTH, struct ship, int h, int w, POSITION position, int shipType, char SHIP_TYPES);
-	print_board(boardA, BOARD_HEIGHT, BOARD_WIDTH);
+	char** boardB = nullptr;
+
+	create_board(boardA);
+	create_board(boardB);
 
 	bool game_over = false;
+
+	greeting();
+
+	cout << "Player A place ships: " << endl;
+	place_all_ships(boardA);
+	cout << "Player B place ships: " << endl;
+	place_all_ships(boardB);
+
+	print_board(boardA);
+	print_board(boardB);
+
 	while (!game_over)
 	{
-		//îñíîâíîé èãðîâîé öèêë
-		//1. Ïðèâåòñòâèå. 
-		//2. Ðàçìåùåíèå êîðàáëåé
-		//3. Êòî ïåðâûé õîäèò?
-		//4. Õîä èãðîêà
-		//4.1 ....
+		//основной игровой цикл
+		//1. Приветствие
+		//2. Кто первый ходит? Игрок А
+		//3. Игрок А размещает свои корабли
+		//4. Ход Игрока А
+
 	}
-	dispose(boardA, BOARD_HEIGHT, BOARD_WIDTH);
+
+	dispose(boardA);
+	dispose(boardB);
 	return 0;
 }
 
 
-
-
-
-
-//ÔÓÍÊÖÈÈ
-
-//ôóíêöèè êàñàþùèåñÿ äîñêè
 void greeting()
 {
 	cout << "        INSTRUCTION        \n";
 	//some instruction
 }
 
-// âûäåëÿåì ïàìÿòü - âûçîâè dispose
-void create_board(char**& board, char BOARD_HEIGHT, char BOARD_WIDTH)
+
+void create_board(char**& board)
 {
 	board = new char* [BOARD_HEIGHT];
 
@@ -107,7 +101,7 @@ void create_board(char**& board, char BOARD_HEIGHT, char BOARD_WIDTH)
 	}
 }
 
-void print_board(char** board, char BOARD_HEIGHT, char BOARD_WIDTH)
+void print_board(char** board)
 {
 
 
@@ -119,9 +113,11 @@ void print_board(char** board, char BOARD_HEIGHT, char BOARD_WIDTH)
 		}
 		cout << endl;
 	}
+	cout << "  " << endl;
+	cout << "  " << endl;
 }
 
-void dispose(char**& board, char BOARD_HEIGHT, char BOARD_WIDTH)
+void dispose(char**& board)
 {
 	//îñâîáîæäåíèå ðåñóðñîâ
 	for (int i = 0; i < (BOARD_HEIGHT); i++)
@@ -139,87 +135,59 @@ void dispose(char**& board, char BOARD_HEIGHT, char BOARD_WIDTH)
 	}
 }
 
-
-//ôóíêöèè êàñàþùèåñÿ êîðàáëåé
-void initialize_ships()
+void place_all_ships(char**& board)
 {
-	ship[0].name = "CARRIER"; ship[0].length = 2; ship[0].count = 4;
-	ship[1].name = "CRUISER"; ship[1].length = 3; ship[1].count = 3;
-	ship[2].name = "BATTLESHIP"; ship[2].length = 4; ship[2].count = 2;
-	ship[3].name = "DESTROYER"; ship[3].length = 5; ship[3].count = 1;
-}
-
-void place_ship_on_board(char** board, char BOARD_HEIGHT, char BOARD_BOARDWIDTH, struct ship, int h, int w, POSITION position, int shipType, char SHIP_TYPES)
-{
-	//âûáèðàåì êîðàáëü, êîòîðûé õîòèì óñòàíîâèòü
-	//êàê ñäåëàòü äâà ñâÿçàííûõ ñâèò÷à, ÷òîá ñíà÷àëà âûáðàòü êîðàáëü, à ïîòîì íàïðàâëåíèå (êàê ñîêðàòèòü êîä?)
-	while (SHIP_TYPES > 0)
+	for (int i = 0; i < COUNT_SHIP_TYPES; i++)
 	{
-		cout << "Enter the number of ship: 0 \n  0 for CARRIER \n 1 for CRUISER \n 2 for BATTLESHIP \n 3 for DESTROYER \n" << endl;
-		cin >> shipType;
-		--SHIP_TYPES;
-		switch (shipType)
+		cout << "Place -  " << shipOptions[i].name << "'s" << endl;
+
+		for (int j = 0; j < shipOptions[i].count; j++)
 		{
-		case 0:
-			if (position == POSITION::horizontal)
+			int x, y;
+
+			cout << "Place " << shipOptions[i].name << " # " << j + 1 << endl;
+
+			//TODO#1: проверять вводимые значения координат
+			cout << "Enter position X: " << endl;
+			cin >> x;
+
+			cout << "Enter position Y: " << endl;
+			cin >> y;
+
+			int direction = -1;
+			while (direction != 0 && direction != 1)
 			{
-				for (int i = 0; i < ship[0].length; i++)
+				cout << "Chose direction: 0 - horizontal, 1 - vertical" << endl;
+				cin >> direction;
+			}
+
+			//TODO#2: проверить коллизии
+
+			if (direction == 0)
+			{
+				for (int k = 0; k < shipOptions[i].length; k++)
 				{
-					board[h][w + i] = SHIP;
+					board[x][y + k] = SHIP;
 				}
 			}
-			if (position == POSITION::vertical)
+			if (direction == 1)
 			{
-				for (int i = 0; i < ship[0].length; i++)
+				for (int k = 0; k < shipOptions[i].length; k++)
 				{
-					board[h + i][w] = SHIP;
+					board[x + k][y] = SHIP;
 				}
 			}
-		case 1:
-			if (position == POSITION::horizontal)
-			{
-				for (int i = 0; i < ship[1].length; i++)
-				{
-					board[h][w + i] = SHIP;
-				}
-			}
-			if (position == POSITION::vertical)
-			{
-				for (int i = 0; i < ship[1].length; i++)
-				{
-					board[h + i][w] = SHIP;
-				}
-			}
-		case 2:
-			if (position == POSITION::horizontal)
-			{
-				for (int i = 0; i < ship[2].length; i++)
-				{
-					board[h][w + i] = SHIP;
-				}
-			}
-			if (position == POSITION::vertical)
-			{
-				for (int i = 0; i < ship[2].length; i++)
-				{
-					board[h + i][w] = SHIP;
-				}
-			}
-		case 4:
-			if (position == POSITION::horizontal)
-			{
-				for (int i = 0; i < ship[3].length; i++)
-				{
-					board[h][w + i] = SHIP;
-				}
-			}
-			if (position == POSITION::vertical)
-			{
-				for (int i = 0; i < ship[3].length; i++)
-				{
-					board[h + i][w] = SHIP;
-				}
-			}
+
 		}
 	}
+
 }
+
+void initialize_ships()
+{
+	shipOptions[0].name = "CARRIER"; shipOptions[0].length = 2; shipOptions[0].count = 1;
+	shipOptions[1].name = "CRUISER"; shipOptions[1].length = 3; shipOptions[1].count = 1;
+	/*shipOptions[2].name = "BATTLESHIP"; shipOptions[2].length = 4; shipOptions[2].count = 2;
+	shipOptions[3].name = "DESTROYER"; shipOptions[3].length = 5; shipOptions[3].count = 1;*/
+}
+
