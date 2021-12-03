@@ -4,15 +4,14 @@ using namespace std;
 
 const int BOARD_HEIGHT = 21; //rows
 const int BOARD_WIDTH = 10; //columns
-const int COUNT_SHIP_TYPES = 4;//показывает сколько всего различных типов кораблей есть
+const int COUNT_SHIP_TYPES = 2;//показывает сколько всего различных типов кораблей есть
 
 const char WATER = '.';
 const char SHIP = '+';
 const char HIT = 'X';
 const char MISS = '0';
 const char SPACER = ' ';
-
-bool clear;
+bool game_over = false;
 
 //все структуры, списки, которые позже нужно вынести в заголовочный файл
 struct ShipOptions
@@ -27,8 +26,9 @@ void initialize_ships();
 void create_board(char**& board);
 void print_board(char** board);
 void dispose(char**& board);
-
 void place_all_ships(char**& board);
+void turn(char**& player_board, char**& opponent_board);
+bool check_collision(char**& const board, int x, int y, int direction, ShipOptions shipOptions);
 
 int main()
 {
@@ -40,7 +40,7 @@ int main()
 	create_board(boardA);
 	create_board(boardB);
 
-	bool game_over = false;
+	
 
 	//1. Приветствие
 	//2. Кто первый ходит? Игрок А
@@ -55,16 +55,21 @@ int main()
 	print_board(boardA);
 	print_board(boardB);
 
-	while (!game_over)
+	while (true)
 	{
-		//основной игровой цикл
-		//turn(char**& player_board, char**& opponent_board)
-		//4. Ход Игрока А
-		//4.1 Показываем поле другого игрока(вторую часть boardA)
-		//4.2 Спрашиваем куда игрок хочет сделать выстрел (x,y)
-		//4.3 Проверяем есть ли у другого игрока что-то в этой позиции
-		//4.4 Если есть - проверяем если ли у игрока Б еще корабли, если нет то gameOver = true; - повторяем ход, иначе передаем другому игроку
+		turn(boardA, boardB);
+		if (game_over)
+		{
+			cout << "Player A WIN!!" << endl;
+			break;
+		}
 
+		turn(boardB, boardA);
+		if (game_over)
+		{
+			cout << "Player B WIN!!" << endl;
+			break;
+		}
 
 	}
 
@@ -73,13 +78,11 @@ int main()
 	return 0;
 }
 
-
 void greeting()
 {
 	cout << "        INSTRUCTION        \n";
 	//some instruction
 }
-
 
 void create_board(char**& board)
 {
@@ -126,7 +129,7 @@ void print_board(char** board)
 }
 
 void dispose(char**& board)
-{	
+{
 	for (int i = 0; i < (BOARD_HEIGHT); i++)
 	{
 		if (board[i] != nullptr)
@@ -146,7 +149,6 @@ void place_all_ships(char**& board)
 {
 	for (int i = 0; i < COUNT_SHIP_TYPES; i++)
 	{
-		is_clear(board);
 		cout << "Place -  " << shipOptions[i].name << "'s" << endl;
 
 		for (int j = 0; j < shipOptions[i].count; j++)
@@ -155,7 +157,6 @@ void place_all_ships(char**& board)
 
 			cout << "Place " << shipOptions[i].name << " # " << j + 1 << endl;
 
-			//TODO#1: проверять вводимые значения координат
 			cout << "Enter position X: " << endl;
 			cin >> x;
 			while (x < 0 || x > 9)
@@ -179,7 +180,36 @@ void place_all_ships(char**& board)
 				cin >> direction;
 			}
 
-			//TODO#2: проверить коллизии
+			//TODO#2: проверить коллизии x,y, direction, shipOptions[i]
+			while (check_collision(board, x, y, direction, shipOptions[i]))
+			{
+				cout << "This part of grid is engaged. Please, choose another coordinates" << endl;
+
+				cout << "Place " << shipOptions[i].name << " # " << j + 1 << endl;
+
+				cout << "Enter position X: " << endl;
+				cin >> x;
+				while (x < 0 || x > 9)
+				{
+					cout << "Wrong number! Please, enter number from 0 to 9" << endl;
+					cin >> x;
+				};
+
+				cout << "Enter position Y: " << endl;
+				cin >> y;
+				while (y < 0 || y > 9)
+				{
+					cout << "Wrong number! Please, enter number from 0 to 9" << endl;
+					cin >> y;
+				};
+
+				direction = -1;
+				while (direction != 0 && direction != 1)
+				{
+					cout << "Chose direction: 0 - horizontal, 1 - vertical" << endl;
+					cin >> direction;
+				}
+			}
 
 			if (direction == 0)
 			{
@@ -214,66 +244,150 @@ void place_all_ships(char**& board)
 					}
 				}
 			}
-			is_clear(board);
+
 		}
 	}
 
+}
+
+void turn(char**& player_board, char**& opponent_board)
+{
+	//turn(char**& player_board, char**& opponent_board)
+	//4. Ход Игрока А
+	//4.1 Показываем поле другого игрока(вторую часть player_board)
+	//4.2 Спрашиваем куда игрок хочет сделать выстрел (x,y)
+	//4.3 Проверяем есть ли у другого игрока что-то в этой позиции
+	//4.4 Если есть - проверяем если ли у игрока Б еще корабли, если нет то gameOver = true; 
+
+	
+	system("cls");
+
+	cout << "YOUR BOARD:" << endl;
+	for (int i = 0; i < (BOARD_HEIGHT-1)/2; i++)
+	{
+		for (int j = 0; j < BOARD_WIDTH; j++)
+		{
+			cout << player_board[i][j];
+		}
+		cout << endl;
+	}
+
+	cout << "OPPONENT BOARD" << endl;
+	for (int i = 11; i < BOARD_HEIGHT; i++)
+	{
+		for (int j = 0; j < BOARD_WIDTH; j++)
+		{
+			cout << player_board[i][j];
+		}
+		cout << endl;
+	}
+	cout << "Enter (x,y)" << endl;
+	int x, y;
+
+	cout << "Enter position X: " << endl;
+	cin >> x;
+	while (x < 0 || x > 9)
+	{
+		cout << "Wrong number! Please, enter number from 0 to 9" << endl;
+		cin >> x;
+	};
+
+	cout << "Enter position Y: " << endl;
+	cin >> y;
+	while (y < 0 || y > 9)
+	{
+		cout << "Wrong number! Please, enter number from 0 to 9" << endl;
+		cin >> y;
+	};
+
+	//выстрел можно произвести
+	if (opponent_board[x][y] == SHIP)
+	{
+		//он попал
+		player_board[x + 11][y] = HIT;
+		opponent_board[x][y] = HIT;
+		cout << "HIT" << endl;
+		cout << "Press Enter for change player" << endl;
+		int t;
+		cin >> t;
+		bool is_game_continue = false;
+		for (int i = 0; i < (BOARD_HEIGHT - 1) / 2; i++)
+		{
+			for (int j = 0; j < BOARD_WIDTH; j++)
+			{
+				if (opponent_board[i][j] == SHIP)
+				{
+					is_game_continue = true;
+					break;
+				}				
+			}
+			if (is_game_continue)
+			{
+				break;
+			}			
+		}
+
+		if (!is_game_continue)
+		{
+			game_over = true;
+			return;
+		}
+	}
+	if (opponent_board[x][y] == WATER)
+	{
+		//он не попал
+		player_board[x + 11][y] = MISS;
+		opponent_board[x][y] = MISS;
+		cout << "MISS" << endl;
+		cout << "Press Enter for change player" << endl;		
+		char t;
+		cin >> t;
+		
+	}
+
+}
+
+/// <summary>
+/// Проверяет коллизии с другими кораблями при размещении.
+/// </summary>
+/// <param name="board">Поле игрока</param>
+/// <param name="x">Координата Х </param>
+/// <param name="y">Координата Y</param>
+/// <param name="direction">Направление размещения</param>
+/// <param name="shipOptions">Размещаемый корабль</param>
+/// <returns>если новый корабль попадает в занятую клетку, либо в соседнюю с другим кораблём - true, если размещение по правилам возможно - false</returns>
+bool check_collision(char**& const board, int x, int y, int direction, ShipOptions shipOptions)
+{
+	if (direction == 0)
+	{
+		for (int i = 0; i < shipOptions.length; i++)
+		{
+			if (board[x][y + i] == SHIP)
+			{
+				return true;
+			}
+		}
+	}
+
+	if (direction == 1)
+	{
+		for (int i = 0; i < shipOptions.length; i++)
+		{
+			if (board[x + i][y] == SHIP)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 void initialize_ships()
 {
-	shipOptions[0].name = "CARRIER"; shipOptions[0].length = 2; shipOptions[0].count = 4;
-	shipOptions[1].name = "CRUISER"; shipOptions[1].length = 3; shipOptions[1].count = 3;
-	shipOptions[2].name = "BATTLESHIP"; shipOptions[2].length = 4; shipOptions[2].count = 2;
-	shipOptions[3].name = "DESTROYER"; shipOptions[3].length = 5; shipOptions[3].count = 1;
+	shipOptions[0].name = "CARRIER"; shipOptions[0].length = 2; shipOptions[0].count = 1;
+	shipOptions[1].name = "CRUISER"; shipOptions[1].length = 3; shipOptions[1].count = 1;
+	/*shipOptions[2].name = "BATTLESHIP"; shipOptions[2].length = 4; shipOptions[2].count = 2;
+	shipOptions[3].name = "DESTROYER"; shipOptions[3].length = 5; shipOptions[3].count = 1;*/
 }
 
-//проверяет занята ли ячейка в массиве
-bool is_clear(char**& board)
-{
-	for (int i = 0; i < 10; i++)
-	{
-		for (int j = 0; j < 10; j++)
-		{
-			if (board[i][j] != WATER)
-			{
-				cout << "This part of grid is engaged. Please, choose another coordinates" << endl;
-				clear = false;
-				return false;
-			}
-		}
-	}
-}
-//проверяет есть ли отступ в одну клетку рядом с кораблем
-bool is_clear_near_ship(char**& board)
-{
-	if (clear = false)
-	{
-
-	}
-
-}
-
-//если стреляет игрок А то мы передаем в функции доску игрока В с 11 строчки
-void shoot(char**& board)
-{
-	int x, y;
-	cout << "Enter position X: ";
-	cin >> x;
-	cout << "Enter position Y: ";
-	cin >> y;
-	for (int i = 11; i <= BOARD_WIDTH; i++)
-	{
-		for (int j = 0; j <= BOARD_HEIGHT; j++)
-		{
-			if (board[i][j] != WATER)
-			{
-				board[i][j] == HIT;
-			}
-			else
-			{
-				board[i][j] == MISS;
-			}
-		}
-	}
-}
