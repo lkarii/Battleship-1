@@ -4,13 +4,15 @@ using namespace std;
 
 const int BOARD_HEIGHT = 21; //rows
 const int BOARD_WIDTH = 10; //columns
-const int COUNT_SHIP_TYPES = 2;//показывает сколько всего различных типов кораблей есть
+const int COUNT_SHIP_TYPES = 4;//показывает сколько всего различных типов кораблей есть
 
 const char WATER = '.';
-const char SHIP = ' +';
+const char SHIP = '+';
 const char HIT = 'X';
 const char MISS = '0';
 const char SPACER = ' ';
+
+bool clear;
 
 //все структуры, списки, которые позже нужно вынести в заголовочный файл
 struct ShipOptions
@@ -62,7 +64,7 @@ int main()
 		//4.2 Спрашиваем куда игрок хочет сделать выстрел (x,y)
 		//4.3 Проверяем есть ли у другого игрока что-то в этой позиции
 		//4.4 Если есть - проверяем если ли у игрока Б еще корабли, если нет то gameOver = true; - повторяем ход, иначе передаем другому игроку
-		
+
 
 	}
 
@@ -124,8 +126,7 @@ void print_board(char** board)
 }
 
 void dispose(char**& board)
-{
-	//îñâîáîæäåíèå ðåñóðñîâ
+{	
 	for (int i = 0; i < (BOARD_HEIGHT); i++)
 	{
 		if (board[i] != nullptr)
@@ -145,6 +146,7 @@ void place_all_ships(char**& board)
 {
 	for (int i = 0; i < COUNT_SHIP_TYPES; i++)
 	{
+		is_clear(board);
 		cout << "Place -  " << shipOptions[i].name << "'s" << endl;
 
 		for (int j = 0; j < shipOptions[i].count; j++)
@@ -156,9 +158,19 @@ void place_all_ships(char**& board)
 			//TODO#1: проверять вводимые значения координат
 			cout << "Enter position X: " << endl;
 			cin >> x;
+			while (x < 0 || x > 9)
+			{
+				cout << "Wrong number! Please, enter number from 0 to 9" << endl;
+				cin >> x;
+			};
 
 			cout << "Enter position Y: " << endl;
 			cin >> y;
+			while (y < 0 || y > 9)
+			{
+				cout << "Wrong number! Please, enter number from 0 to 9" << endl;
+				cin >> y;
+			};
 
 			int direction = -1;
 			while (direction != 0 && direction != 1)
@@ -173,17 +185,36 @@ void place_all_ships(char**& board)
 			{
 				for (int k = 0; k < shipOptions[i].length; k++)
 				{
-					board[x][y + k] = SHIP;
+
+					if ((x + shipOptions[i].length) > 10)
+					{
+						cout << "the ship is too long and goes beyond the field, please specify a different coordinate X: \n";
+						cin >> x;
+						board[y][x + k] = SHIP;
+					}
+					else
+					{
+						board[y][x + k] = SHIP;
+					}
 				}
 			}
 			if (direction == 1)
 			{
 				for (int k = 0; k < shipOptions[i].length; k++)
 				{
-					board[x + k][y] = SHIP;
+					if ((y + shipOptions[i].length) > 10)
+					{
+						cout << "the ship is too long and goes beyond the field, please specify a different coordinate Y: \n";
+						cin >> y;
+						board[y + k][x] = SHIP;
+					}
+					else
+					{
+						board[y + k][x] = SHIP;
+					}
 				}
 			}
-
+			is_clear(board);
 		}
 	}
 
@@ -191,9 +222,58 @@ void place_all_ships(char**& board)
 
 void initialize_ships()
 {
-	shipOptions[0].name = "CARRIER"; shipOptions[0].length = 2; shipOptions[0].count = 1;
-	shipOptions[1].name = "CRUISER"; shipOptions[1].length = 3; shipOptions[1].count = 1;
-	/*shipOptions[2].name = "BATTLESHIP"; shipOptions[2].length = 4; shipOptions[2].count = 2;
-	shipOptions[3].name = "DESTROYER"; shipOptions[3].length = 5; shipOptions[3].count = 1;*/
+	shipOptions[0].name = "CARRIER"; shipOptions[0].length = 2; shipOptions[0].count = 4;
+	shipOptions[1].name = "CRUISER"; shipOptions[1].length = 3; shipOptions[1].count = 3;
+	shipOptions[2].name = "BATTLESHIP"; shipOptions[2].length = 4; shipOptions[2].count = 2;
+	shipOptions[3].name = "DESTROYER"; shipOptions[3].length = 5; shipOptions[3].count = 1;
 }
 
+//проверяет занята ли ячейка в массиве
+bool is_clear(char**& board)
+{
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			if (board[i][j] != WATER)
+			{
+				cout << "This part of grid is engaged. Please, choose another coordinates" << endl;
+				clear = false;
+				return false;
+			}
+		}
+	}
+}
+//проверяет есть ли отступ в одну клетку рядом с кораблем
+bool is_clear_near_ship(char**& board)
+{
+	if (clear = false)
+	{
+
+	}
+
+}
+
+//если стреляет игрок А то мы передаем в функции доску игрока В с 11 строчки
+void shoot(char**& board)
+{
+	int x, y;
+	cout << "Enter position X: ";
+	cin >> x;
+	cout << "Enter position Y: ";
+	cin >> y;
+	for (int i = 11; i <= BOARD_WIDTH; i++)
+	{
+		for (int j = 0; j <= BOARD_HEIGHT; j++)
+		{
+			if (board[i][j] != WATER)
+			{
+				board[i][j] == HIT;
+			}
+			else
+			{
+				board[i][j] == MISS;
+			}
+		}
+	}
+}
